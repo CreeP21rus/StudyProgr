@@ -5,59 +5,52 @@ namespace ConsoleApp1
     public class Class
     {
         private string name;
-        private int id;
-        private int number;
-        private int[] peoplelist;
-        private int idschool;
-        public Class(int np1)
+        private People[] peopleList;
+        private School school;
+        public Class()
         {
             name = null;
-            id = -1;
-            number = 0;
-            peoplelist = new int[np1];
-            idschool = -1;
+            peopleList = new People[0];
         }
-        public Class(string name, int idschool, int[] peoplelist, int number)
+        public Class(string name, ref School school, People[] peopleList)
         {
             this.name = name;
-            this.idschool = idschool;
-            this.peoplelist = peoplelist;
-            this.number = number;
+            this.school = school;
+            this.peopleList = peopleList;
         }
 
         public string Name
         {
-            get { return this.name; }
             set { this.name = value; }
+            get { return this.name; }
         }
-        public int Id
+        public School School
         {
-            get { return this.id; }
-            set { this.id = value; }
+            get { return this.school; }
+            set
+            {
+                this.school = value;
+            }
         }
-        public int Number
+        public People this[int i]
         {
-            get { return this.number; }
-            set { this.number = value; }
+            get { return peopleList[i]; }
+            set
+            {
+                peopleList[i] = value;
+            }
         }
-        public int Idschool
+        public People[] PeopleList
         {
-            get { return this.idschool; }
-            set { this.idschool = value; }
-        }
-        public int this[int i]
-        {
-            get { return peoplelist[i]; }
-            set { peoplelist[i] = value; }
-        }
-        public int[] Peoplelist
-        {
-            get { return this.peoplelist; }
-            set { this.peoplelist = value; }
+            get { return this.peopleList; }
         }
         public int Length
         {
-            get { return peoplelist.Length; }
+            get { return peopleList.Length; }
+        }
+        public void changeLength(int length)
+        {
+            Array.Resize(ref peopleList, length);
         }
     }
 }

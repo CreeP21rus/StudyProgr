@@ -5,41 +5,35 @@ namespace ConsoleApp1
     public class Canteen
     {
         private string name;
-        private int id;
-        private int idschool;
+        private School school;
         private string[] menu;
         public Canteen()
         {
             name = null;
-            id = -1;
-            idschool = -1;
             menu = null;
         }
-        public Canteen(string name, int idschool)
+        public Canteen(string name,ref School school)
         {
             this.name = name;
-            this.idschool = idschool;
+            this.school = school;
         }
-        public Canteen(string name, int idschool, string[] menu)
+        public Canteen(string name,ref School school, string[] menu)
         {
             this.name = name;
-            this.idschool = idschool;
+            this.school = school;
             this.menu = menu;
         }
         public string Name
         {
             get { return this.name; }
-            set { this.name = value; }
         }
-        public int Id
+        public School School
         {
-            get { return this.id; }
-            set { this.id = value; }
-        }
-        public int Idschool
-        {
-            get { return this.idschool; }
-            set { this.idschool = value; }
+            get { return this.school; }
+            set
+            {
+                this.school = value;
+            }
         }
         public string[] Menu
         {

@@ -1,65 +1,59 @@
-﻿namespace ConsoleApp1
+﻿using System;
+
+namespace ConsoleApp1
 {
     public class School
     {
         private string name;
-        private int id;
-        private int idcanteen;
-        private int[] grouplist;
-        private int number;
-        public School(int ng1)
+        private Canteen canteen;
+        private Class[] clasList;
+        public School()
         {
-            name = "";
-            id = -1;
-            number = 0;
-            grouplist = new int[ng1];
-            idcanteen = -1;
+            name = null;
+            clasList = new Class[0];
         }
-        public School(string name, int idcanteen, int[] grouplist, int number)
+        public School(string name, ref Canteen canteen, Class[] clasList)
         {
             this.name = name;
-            this.idcanteen = idcanteen;
-            this.grouplist = grouplist;
-            this.number = number;
+            this.canteen = canteen;
+            this.clasList = clasList;
         }
         public string Name
         {
             get { return this.name; }
-            set { this.name = value; }
         }
-        public int Id
+        public Canteen Canteen
         {
-            get { return this.id; }
-            set { this.id = value; }
+            get { return this.canteen; }
+            set
+            {
+                this.canteen = value;
+            }
         }
-        public int Idcanteer
+        public Class[] ClasList
         {
-            get { return this.idcanteen; }
-            set { this.idcanteen = value; }
-        }
-        public int Number
-        {
-            get { return this.number; }
-            set { this.number = value; }
-        }
-        public int[] Grouplist
-        {
-            get { return this.grouplist; }
-            set { this.grouplist = value; }
+            get { return this.clasList; }
         }
         public int Length
         {
-            get { return grouplist.Length; }
+            get { return clasList.Length; }
         }
-        public int this[int i]
+        public Class this[int i]
         {
-            get { return grouplist[i]; }
-            set { grouplist[i] = value; }
+            get { return clasList[i]; }
+            set
+            {
+                clasList[i] = value;
+            }
+        }
+        public void ChangeLength(int length)
+        {
+            Array.Resize(ref clasList, length);
         }
 
-        public void ChangeCanteen(int idcanteen)
+        public void ChangeCanteen(ref Canteen canteen)
         {
-            this.idcanteen = idcanteen;
+            this.canteen = canteen;
         }
     }
 }

@@ -4,78 +4,67 @@ namespace ConsoleApp1
 {
     public class People
     {
+        public void Delete(ref Class clas)
+        {
+            int i = 0;
+            while (clas.PeopleList[i] != this)
+            {
+                i++;
+            }
+            for (; i < clas.Length-1; i++)
+            {
+                clas.PeopleList[i] = clas.PeopleList[i + 1];
+            }
+            clas.changeLength(clas.Length - 1);
+        }
         private string name;
-        private int id;
-        private int idgroup;
-        private int idschool;
+        private Class clas;
+        private School school;
         public People()
         {
             name = null;
-            id = -1;
-            idgroup = -1;
-            idschool = -1;
         }
-        public People(string name, int idgroup, int idschool)
+        public People(string name, ref Class clas, ref School school)
         {
             this.name = name;
-            this.idgroup = idgroup;
-            this.idschool = idschool;
-
+            this.clas = clas;
+            this.school = school;
         }
         public string Name
         {
-            get { return this.name; }
             set { this.name = value; }
+            get { return this.name; }
         }
-        public int Id
+        public Class Class
         {
-            get { return this.id; }
-            set { this.id = value; }
+            get { return this.Class; }
+            set
+            {
+                this.clas = value;
+            }
         }
-        public int Idgroup
+        public School School
         {
-            get { return this.idgroup; }
-            set { this.idgroup = value; }
-        }
-        public int Idschool
-        {
-            get { return this.idschool; }
-            set { this.idschool = value; }
+            get { return this.school; }
+            set
+            {
+                this.school = value;
+            }
         }
 
-        public void ChangeGroup(Class[] group, int idgroup)
+        public void ChangeClass(ref Class clas )
         {
-            if (group[idgroup].Number < 5)
-            {
-                Program.Delete(this.id, group[this.idgroup]);
-                group[idgroup][group[idgroup].Number] = this.id;
-                group[idgroup].Number = group[idgroup].Number + 1;
-                this.idgroup = idgroup;
-            }
-            else Console.WriteLine("Sorry group is full");
+            Delete(ref this.clas);
+            clas.changeLength(clas.Length + 1);
+            clas[clas.Length-1] = this;
+            this.clas = clas;
         }
-        public void ChangeSchool(School[] school, Class[] group, int idschool)
+        public void ChangeSchool(ref School school, int number)
         {
-            if ((school[idschool].Number>this.idgroup)&&(group[school[idschool][this.idgroup]].Number < 5))
-            {
-                Program.Delete(this.id, group[this.idgroup]);
-                group[school[idschool][this.idgroup]][group[school[idschool][this.idgroup]].Number] = this.id;
-                group[school[idschool][this.idgroup]].Number = group[school[idschool][this.idgroup]].Number + 1;
-                this.idschool = idschool;
-            }
-            else Console.WriteLine("Sorry group is full");
-        }
-        public void ChangeSchool(School[] school, Class[] group, int idschool, int idgroup)
-        {
-            if ((school[idschool].Number > idgroup) && (group[school[idschool][idgroup]].Number < 5))
-            {
-                Program.Delete(this.id, group[this.idgroup]);
-                group[school[idschool][idgroup]][group[school[idschool][idgroup]].Number] = this.id;
-                group[school[idschool][idgroup]].Number = group[school[idschool][idgroup]].Number + 1;
-                this.idschool = idschool;
-                this.idgroup = idgroup;
-            }
-            else Console.WriteLine("Sorry group is full");
+            Delete(ref this.clas);
+            school.ChangeLength(school.Length + 1);
+            school[number][school[number].Length] = this;
+            this.school = school;
         }
     }
 }
