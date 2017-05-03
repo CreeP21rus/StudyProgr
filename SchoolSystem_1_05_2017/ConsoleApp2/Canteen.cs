@@ -32,5 +32,9 @@ namespace ConsoleApp1
             get { return this.menu; }
             set { this.menu = value; }
         }
+        public void Service(Human human, List<string> Order)
+        {
+            string s = "Младой человек вы что не видите, у нас обед!";
+        }
     }
 }

@@ -6,21 +6,21 @@ namespace ConsoleApp1
     public class Class
     {
         private string name;
-        private List<People> peopleList;
+        private List<Human> ListOfHuman;
         public Class()
         {
             this.name = null;
-            this.peopleList = new List<People>();
+            this.ListOfHuman = new List<Human>();
         }
         public Class(string name)
         {
             this.name = name;
-            this.peopleList = new List<People>();
+            this.ListOfHuman = new List<Human>();
         }
-        public Class(string name, List<People> peopleList)
+        public Class(string name, List<Human> ListOfHuman)
         {
             this.name = name;
-            this.peopleList = peopleList;
+            this.ListOfHuman = ListOfHuman;
         }
 
         public string Name
@@ -28,15 +28,10 @@ namespace ConsoleApp1
             set { if (this.name == null) this.name = value; }
             get { return this.name; }
         }
-        public List<People> PeopleList
+        public List<Human> ListofHuman
         {
-            get { return this.peopleList; }
-            set { this.peopleList = value; }
-        }
-        public void ChangeClass(Class NewClass, People People)
-        {
-            this.PeopleList.Remove(People);
-            NewClass.PeopleList.Add(People);
+            get { return this.ListOfHuman; }
+            set { this.ListOfHuman = value; }
         }
     }
 }

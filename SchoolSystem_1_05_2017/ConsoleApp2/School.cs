@@ -40,17 +40,54 @@ namespace ConsoleApp1
             set { if (this.clasList == null) this.clasList = value; }
             get { return this.clasList; }
         }
-        public void AcceptPeople(Class Class, params People[] PeopleMass)
+        public void Accept(Class Class, Human human)
         {
             for (int i = 0; i < this.clasList.Count; i++)
                 if (Class == this.clasList[i])
                 {
-                    for (int j=0;j<PeopleMass.Length;j++)
-                    {
-                        this.clasList[i].PeopleList.Add(PeopleMass[j]);
-                    }
+                    this.clasList[i].ListofHuman.Add(human);
                     break;
                 }
+        }
+        public void Accept(Class Class, List<Human> human)
+        {
+            for (int i = 0; i < this.clasList.Count; i++)
+                if (Class == this.clasList[i])
+                {
+                    for (int j = 0; j < human.Count; j++)
+                    { this.clasList[i].ListofHuman.Add(human[j]); }
+                    break;
+                }
+        }
+        /* Ты хочешь так, но ведь так будет потрачено больше ресурсов, почему... почему нужно делать такие жертвы ради логики?
+        public void Accept(Class Class, List<Human> human)
+        {
+            for (int i = 0; i < human.Count; i++)
+                {
+                    Accept(Class, human[i])
+                }
+        }*/
+        public void Kick(Human human)
+        {
+            for (int i = 0; i < this.clasList.Count; i++)
+                for (int j = 0; j < this.clasList[i].ListofHuman.Count; j++)
+                    if (human == this.clasList[i].ListofHuman[j])
+                    {
+                        this.clasList[i].ListofHuman.Remove(human);
+                        break;
+                    }
+        }
+        public void ChangeClass(Class NewClass, Human human)
+        {
+            //или ты все таки хотел что бы я хранил в челе ссылку на его класс?
+            for (int i = 0; i < this.clasList.Count; i++)
+                for (int j = 0; j < this.clasList[i].ListofHuman.Count; j++)
+                    if (human == this.clasList[i].ListofHuman[j])
+                    {
+                        this.clasList[i].ListofHuman.Remove(human);
+                        break;
+                    }
+            NewClass.ListofHuman.Add(human);
         }
     }
 }
