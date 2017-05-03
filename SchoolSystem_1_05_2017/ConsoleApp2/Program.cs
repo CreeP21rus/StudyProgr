@@ -17,8 +17,6 @@ namespace ConsoleApp1
             {
                 School.Add(new School());
                 Canteen.Add(new Canteen());
-                for (int i = 0; i < 10; i++)
-                    Class.Add(new Class());
                 for (int i = 0; i < 27; i++)
                     People.Add(new Human());
             }
@@ -28,7 +26,7 @@ namespace ConsoleApp1
                 Canteen[0] = new Canteen("C#0"); School[0].Canteen = Canteen[0];
                 for (int i = 0; i < 10; i++)
                 {
-                    Class[i] = new Class("#" + (i + 1));
+                    Class.Add(new Class("#" + (i + 1)));
                     School[0].ClasList.Add(Class[i]);
                 }
                 for (int i = 0; i < (int)('Z') - (int)('A') + 1; i++)

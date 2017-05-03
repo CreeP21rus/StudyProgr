@@ -51,22 +51,11 @@ namespace ConsoleApp1
         }
         public void Accept(Class Class, List<Human> human)
         {
-            for (int i = 0; i < this.clasList.Count; i++)
-                if (Class == this.clasList[i])
-                {
-                    for (int j = 0; j < human.Count; j++)
-                    { this.clasList[i].ListofHuman.Add(human[j]); }
-                    break;
-                }
-        }
-        /* Ты хочешь так, но ведь так будет потрачено больше ресурсов, почему... почему нужно делать такие жертвы ради логики?
-        public void Accept(Class Class, List<Human> human)
-        {
             for (int i = 0; i < human.Count; i++)
-                {
-                    Accept(Class, human[i])
-                }
-        }*/
+            {
+                Accept(Class, human[i]);
+            }
+        }
         public void Kick(Human human)
         {
             for (int i = 0; i < this.clasList.Count; i++)
