@@ -1,119 +1,171 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleAppLinkedList
 {
-    class Linked_List
+    class Linked_List : ICollection<int>
     {
-        private List<Element_Linked> List;
-        Linked_List()
+        private Element ElementLink;
+        private int count;
+        public int Count
         {
-            List = new List<Element_Linked>();
+            get { return this.count; }
         }
-        public void AddFirst(int number)
+        public Linked_List()
         {
-            List.Add(new Element_Linked(number));
+            ElementLink = null;
+            this.count = 0;
         }
-        public void AddBefore(int number, Element_Linked ElementLinked)
+        public Linked_List(Element ElementLink)
         {
-            int index = List.IndexOf(ElementLinked);
-            List.Insert(index, new Element_Linked(number, ElementLinked._BeforeElementLinked, ElementLinked));
-            ElementLinked = new Element_Linked(ElementLinked._Number, List[index], ElementLinked._AfterElementLinked);
+            this.ElementLink = ElementLink;
         }
-        public void AddAfter(int number, Element_Linked ElementLinkedList)
+        public Element GetElement(int index)
         {
-            int index = List.IndexOf(ElementLinkedList)+1;
-            List.Insert(index, new Element_Linked(number, ElementLinkedList, ElementLinkedList._AfterElementLinked));
-            ElementLinkedList = new Element_Linked(ElementLinkedList._Number, ElementLinkedList._BeforeElementLinked, List[index]);
+            if ((index <= count) && (index >= 0))
+            {
+                Element Element;
+                if (index == 0) { Element = ElementLink; }
+                else Element = ElementLink.GetNext(index);
+                return Element;
+            }
+            else throw new InvalidOperationException();
         }
-        public void AddLast(int number)
+        
+        public bool IsReadOnly => throw new NotImplementedException();
+        public void Add(int item)
         {
-            List.Add(new Element_Linked(number, List[List.Count - 1]));
-            List[List.Count - 2] = new Element_Linked(List[List.Count - 2]._Number, List[List.Count - 2]._BeforeElementLinked, List[List.Count - 1]);
+            if (ElementLink != null)
+            {
+                Element Element = GetElement(count - 1);
+                Element.NextElement = new Element(item, Element);
+                count++;
+            } else { ElementLink = new Element(item); count++; }
         }
-        public void RemoveFirst()
+        public void AddFirst(int item)
         {
-            List[1] = new Element_Linked(List[1]._Number, null , List[1]._AfterElementLinked);
-            List.Remove(List[0]);
+            Element Element = new Element(item);
+            ElementLink.PreviousElement = Element;
+            Element.NextElement = ElementLink;
+            ElementLink = Element;
         }
-        public void Remove(int index)
+        public void Add(int index ,int item)
         {
-            List[index - 1] = new Element_Linked(List[index - 1]._Number, List[index - 1]._BeforeElementLinked, List[index]._AfterElementLinked);
-            List[index + 1] = new Element_Linked(List[index + 1]._Number, List[index]._BeforeElementLinked, List[index + 1]._AfterElementLinked);
-            List.Remove(List[index]);
+            if ((index < count) && (index >= 0))
+            {
+                Element Element = new Element(item);
+                Element ElementIndex = GetElement(index);
+                if (ElementIndex.NextElement != null)
+                {
+                    ElementIndex.NextElement.PreviousElement = Element;
+                    Element.NextElement = ElementIndex.NextElement;
+                }
+                Element.PreviousElement = ElementIndex;
+                ElementIndex.NextElement = Element;
+                count++;
+            }
+            else throw new InvalidOperationException();
         }
-        public void RemoveLast()
+
+        public void Delete(int index)
         {
-            List[List.Count - 2] = new Element_Linked(List[List.Count - 2]._Number, List[List.Count - 2]._BeforeElementLinked, null);
-            List.Remove(List[List.Count - 1]);
+            if ((index < count) && (index >= 0))
+            {
+                Element Element = GetElement(index);
+                if (Element.PreviousElement != null)
+                {
+                    Element.PreviousElement.NextElement = Element.NextElement;
+                }
+                if (Element.NextElement != null)
+                {
+                    Element.NextElement.PreviousElement = Element.PreviousElement;
+                }
+                count--;
+            }
+            else throw new InvalidOperationException();
         }
         public void Clear()
         {
-            for(int i=0;i<List.Count;i++)
+            Element Element = GetElement(count - 2);
+            for (int i=count-1;i>0;i--)
             {
-                Remove(i);
+                Element.NextElement = null;
+                Element = Element.PreviousElement;
             }
+            ElementLink = null;
+            count = 0;
         }
-        public bool Contains(int number)
+
+        public bool Contains(int item)
         {
-            bool rez=false;
-            foreach (Element_Linked element in List)
+            bool Result = false;
+            Element Element = ElementLink;
+            for (int i=0;i<count;i++)
             {
-                if (element._Number==number)
+                if (item == Element.Number)
                 {
-                    rez = true;
+                    Result = true;
+                    break;
+                }
+                else Element = Element.GetNext();
+            }
+            return Result;
+        }
+
+        public void CopyTo(int[] array, int arrayIndex)
+        {
+            if ((arrayIndex < count) && (arrayIndex >= 0))
+            {
+                for (int i = 0; i < array.Length; i++)
+                {
+                    Add(array[i], arrayIndex + i);
+                }
+            }
+            else throw new InvalidOperationException();
+        }
+
+        public IEnumerator<int> GetEnumerator()
+        {
+            if (count > 0)
+            {
+                Element Element = ElementLink;
+                yield return Element.Number;
+                for (int i = 0; i < count - 1; i++)
+                {
+                    Element = Element.GetNext();
+                    yield return Element.Number;
+                }
+            }else Console.WriteLine("Ошибка:\"Список пуст\"");
+        }
+
+        public bool Remove(int item)
+        {
+            bool Result = false;
+            Element Element = ElementLink;
+            for (int i = 0; i < count; i++)
+            {
+                if (item == Element.Number)
+                {
+                    Element.GetNext().NextElement = null;
+                    Element.GetPrevious().PreviousElement = null;
+                    Result = true;
                     break;
                 }
             }
-            return rez;
+            return Result;
         }
-        public int Count()
+
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return List.Count;
-        }
-        public void CopyTo(int[] array,int index)
-        {
-            for (int i=index;i<List.Count;i++)
+            Element Element = ElementLink;
+            yield return Element;
+            for (int i = 0; i < count - 1; i++)
             {
-                array[i - index] = List[i]._Number;
+                Element = Element.GetNext();
+                yield return Element;
             }
-        }
-        public Element_Linked Find(int number)
-        {
-            Element_Linked rez=null;
-            foreach (Element_Linked element in List)
-            {
-                if (element._Number == number)
-                {
-                    rez = element;
-                    break;
-                }
-            }
-            return rez;
-        }
-        public Element_Linked FindLast(int number)
-        {
-            Element_Linked rez = null;
-            for (int i=List.Count-1;i>=0;i--)
-            {
-                if (List[i]._Number == number)
-                {
-                    rez = List[i];
-                    break;
-                }
-            }
-            return rez;
-        }
-        public Element_Linked First()
-        {
-            return List[0];
-        }
-        public Element_Linked Last()
-        {
-            return List[List.Count - 1];
+
         }
     }
 }
