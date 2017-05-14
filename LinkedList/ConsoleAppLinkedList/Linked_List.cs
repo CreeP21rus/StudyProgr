@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ConsoleAppLinkedList
 {
-    class Linked_List : ICollection<int>
+    class Linked_List : ICollection<Element>
     {
         private Element ElementLink;
         private int count;
@@ -34,7 +34,7 @@ namespace ConsoleAppLinkedList
         }
         
         public bool IsReadOnly => throw new NotImplementedException();
-        public void Add(int item)
+        public void Add(object item)
         {
             if (ElementLink != null)
             {
@@ -43,14 +43,17 @@ namespace ConsoleAppLinkedList
                 count++;
             } else { ElementLink = new Element(item); count++; }
         }
-        public void AddFirst(int item)
+        public void Add(Element item)
         {
-            Element Element = new Element(item);
-            ElementLink.PreviousElement = Element;
-            Element.NextElement = ElementLink;
-            ElementLink = Element;
+            if (ElementLink != null)
+            {
+                Element Element = GetElement(count - 1);
+                Element.NextElement = item;
+                count++;
+            }
+            else { ElementLink = item; count++; }
         }
-        public void Add(int index ,int item)
+        public void Add(int index ,object item)
         {
             if ((index < count) && (index >= 0))
             {
@@ -63,6 +66,22 @@ namespace ConsoleAppLinkedList
                 }
                 Element.PreviousElement = ElementIndex;
                 ElementIndex.NextElement = Element;
+                count++;
+            }
+            else throw new InvalidOperationException();
+        }
+        public void Add(int index, Element item)
+        {
+            if ((index < count) && (index >= 0))
+            {
+                Element ElementIndex = GetElement(index);
+                if (ElementIndex.NextElement != null)
+                {
+                    ElementIndex.NextElement.PreviousElement = item;
+                    item.NextElement = ElementIndex.NextElement;
+                }
+                item.PreviousElement = ElementIndex;
+                ElementIndex.NextElement = item;
                 count++;
             }
             else throw new InvalidOperationException();
@@ -97,13 +116,28 @@ namespace ConsoleAppLinkedList
             count = 0;
         }
 
-        public bool Contains(int item)
+        public bool Contains(object item)
         {
             bool Result = false;
             Element Element = ElementLink;
             for (int i=0;i<count;i++)
             {
-                if (item == Element.Number)
+                if (item == Element.Data)
+                {
+                    Result = true;
+                    break;
+                }
+                else Element = Element.GetNext();
+            }
+            return Result;
+        }
+        public bool Contains(Element item)
+        {
+            bool Result = false;
+            Element Element = ElementLink;
+            for (int i = 0; i < count; i++)
+            {
+                if (item == Element)
                 {
                     Result = true;
                     break;
@@ -113,39 +147,66 @@ namespace ConsoleAppLinkedList
             return Result;
         }
 
-        public void CopyTo(int[] array, int arrayIndex)
+        public void CopyTo(object[] item, int itemIndex)
         {
-            if ((arrayIndex < count) && (arrayIndex >= 0))
+            if ((itemIndex < count) && (itemIndex >= 0))
             {
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < item.Length; i++)
                 {
-                    Add(array[i], arrayIndex + i);
+                    Add(itemIndex + i, item[i]);
+                }
+            }
+            else throw new InvalidOperationException();
+        }
+        public void CopyTo(Element[] item, int itemIndex)
+        {
+            if ((itemIndex < count) && (itemIndex >= 0))
+            {
+                for (int i = 0; i < item.Length; i++)
+                {
+                    Add(itemIndex + i, item[i]);
                 }
             }
             else throw new InvalidOperationException();
         }
 
-        public IEnumerator<int> GetEnumerator()
+        public IEnumerator<Element> GetEnumerator()
         {
             if (count > 0)
             {
                 Element Element = ElementLink;
-                yield return Element.Number;
+                yield return Element;
                 for (int i = 0; i < count - 1; i++)
                 {
                     Element = Element.GetNext();
-                    yield return Element.Number;
+                    yield return Element;
                 }
             }else Console.WriteLine("Ошибка:\"Список пуст\"");
         }
 
-        public bool Remove(int item)
+        public bool Remove(object item)
         {
             bool Result = false;
             Element Element = ElementLink;
             for (int i = 0; i < count; i++)
             {
-                if (item == Element.Number)
+                if (item == Element.Data)
+                {
+                    Element.GetNext().NextElement = null;
+                    Element.GetPrevious().PreviousElement = null;
+                    Result = true;
+                    break;
+                }
+            }
+            return Result;
+        }
+        public bool Remove(Element item)
+        {
+            bool Result = false;
+            Element Element = ElementLink;
+            for (int i = 0; i < count; i++)
+            {
+                if (item == Element)
                 {
                     Element.GetNext().NextElement = null;
                     Element.GetPrevious().PreviousElement = null;

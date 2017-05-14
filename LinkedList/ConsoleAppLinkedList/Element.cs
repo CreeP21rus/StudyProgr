@@ -4,30 +4,30 @@ namespace ConsoleAppLinkedList
 {
     class Element
     {
-        public int Number;
+        public object Data;
         public Element NextElement;
         public Element PreviousElement;
         public Element()
         {
-            this.Number = 0;
+            this.Data = 0;
             this.NextElement = null;
             this.PreviousElement = null;
         }
-        public Element(int number)
+        public Element(object Data)
         {
-            this.Number = number;
+            this.Data = Data;
             this.NextElement = null;
             this.PreviousElement = null;
         }
-        public Element(int number, Element PreviousElement)
+        public Element(object Data, Element PreviousElement)
         {
-            this.Number = number;
+            this.Data = Data;
             this.PreviousElement = PreviousElement;
             this.NextElement = null;
         }
-        public Element(int number, Element PreviousElement, Element NextElement)
+        public Element(object Data, Element PreviousElement, Element NextElement)
         {
-            this.Number = number;
+            this.Data = Data;
             this.PreviousElement = PreviousElement;
             this.NextElement = NextElement;
         }
@@ -40,27 +40,35 @@ namespace ConsoleAppLinkedList
         {
             return ref NextElement;
         }
-        public Element GetNext(int number)
+        public Element GetNext(int index)
         {
-            Element Result = NextElement;
-            for (int i=2;i<=number;i++)
+            if (index >= 0)
             {
-                Result = Result.GetNext();
+                Element Result = index == 0 ? this : NextElement;
+                for (int i = 2; i <= index; i++)
+                {
+                    Result = Result.GetNext();
+                }
+                return Result;
             }
-            return Result;
+            else throw new InvalidOperationException();
         }
         public Element GetPrevious()
         {
             return PreviousElement;
         }
-        public Element GetPrevious(int number)
+        public Element GetPrevious(int index)
         {
-            Element Result = NextElement;
-            for (int i = 2; i <= number; i++)
+            if (index >= 0)
             {
-                Result = Result.GetNext();
+                Element Result = index == 0 ? this : NextElement;
+                for (int i = 2; i <= index; i++)
+                {
+                    Result = Result.GetNext();
+                }
+                return Result;
             }
-            return Result;
+            else throw new InvalidOperationException();
         }
 
     }
