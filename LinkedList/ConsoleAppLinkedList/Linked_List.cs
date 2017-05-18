@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace ConsoleAppLinkedList
 {
-    class Linked_List : ICollection<Element>
+    class Linked_List<T> : ICollection<Node<T>>
     {
-        private Element ElementLink;
+        private Node<T> FirstNode;
         private int count;
         public int Count
         {
@@ -14,91 +14,100 @@ namespace ConsoleAppLinkedList
         }
         public Linked_List()
         {
-            ElementLink = null;
+            FirstNode = null;
             this.count = 0;
         }
-        public Linked_List(Element ElementLink)
+        public Linked_List(IEnumerable<Node<T>> collection)
         {
-            this.ElementLink = ElementLink;
-        }
-        public Element GetElement(int index)
-        {
-            if ((index <= count) && (index >= 0))
+            foreach (Node<T> element in collection)
             {
-                Element Element;
-                if (index == 0) { Element = ElementLink; }
-                else Element = ElementLink.GetNext(index);
-                return Element;
+                Add(element);
             }
-            else throw new InvalidOperationException();
+        }
+        public Node<T> this[int i]
+        {
+            get
+            {
+                if ((i < count) && (i >= 0))
+                {
+                    if (i == 0) { return FirstNode; }
+                    else return FirstNode.GetNext(i);
+                }
+                else throw new InvalidOperationException();
+            }
+            set
+            {
+                if ((i < count) && (i >= 0))
+                {
+                    if (i == 0) { FirstNode = value; }
+                    else
+                    {
+                        value.NextNode = FirstNode.GetNext(i).NextNode;
+                        FirstNode.GetNext(i-1).NextNode = value;
+                    }
+                }
+                else throw new InvalidOperationException();
+            }
         }
         
         public bool IsReadOnly => throw new NotImplementedException();
-        public void Add(object item)
+        public void Add(Node<T> Node)
         {
-            if (ElementLink != null)
+            if (FirstNode != null)
             {
-                Element Element = GetElement(count - 1);
-                Element.NextElement = new Element(item, Element);
-                count++;
-            } else { ElementLink = new Element(item); count++; }
-        }
-        public void Add(Element item)
-        {
-            if (ElementLink != null)
-            {
-                Element Element = GetElement(count - 1);
-                Element.NextElement = item;
+                Node<T> SomeNode = this[count - 1];
+                SomeNode.NextNode = Node;
                 count++;
             }
-            else { ElementLink = item; count++; }
+            else { FirstNode = Node; count++; }
         }
-        public void Add(int index ,object item)
+        public void Add(IEnumerable<Node<T>> collection)
+        {
+            foreach (Node<T> Node in collection)
+            {
+                Add(Node);
+            }
+        }
+        public void Add(int index, Node<T> Node)
         {
             if ((index < count) && (index >= 0))
             {
-                Element Element = new Element(item);
-                Element ElementIndex = GetElement(index);
-                if (ElementIndex.NextElement != null)
+                Node<T> NodeIndex = this[index];
+                if (NodeIndex.NextNode != null)
                 {
-                    ElementIndex.NextElement.PreviousElement = Element;
-                    Element.NextElement = ElementIndex.NextElement;
+                    Node.NextNode = NodeIndex.NextNode;
                 }
-                Element.PreviousElement = ElementIndex;
-                ElementIndex.NextElement = Element;
+                NodeIndex.NextNode = Node;
                 count++;
             }
             else throw new InvalidOperationException();
         }
-        public void Add(int index, Element item)
+        public void Add(int index, IEnumerable<Node<T>> collection)
         {
-            if ((index < count) && (index >= 0))
+            foreach (Node<T> Node in collection)
             {
-                Element ElementIndex = GetElement(index);
-                if (ElementIndex.NextElement != null)
-                {
-                    ElementIndex.NextElement.PreviousElement = item;
-                    item.NextElement = ElementIndex.NextElement;
-                }
-                item.PreviousElement = ElementIndex;
-                ElementIndex.NextElement = item;
-                count++;
+                Add(index, Node);index++;
             }
-            else throw new InvalidOperationException();
         }
 
-        public void Delete(int index)
+        public void Remove(int index)
         {
             if ((index < count) && (index >= 0))
             {
-                Element Element = GetElement(index);
-                if (Element.PreviousElement != null)
+                if (index > 0)
                 {
-                    Element.PreviousElement.NextElement = Element.NextElement;
+                    if (this[index].NextNode != null)
+                    {
+                        this[index - 1].NextNode = this[index].NextNode;
+                    }
+                    else
+                    {
+                        this[index - 1].NextNode = null;
+                    }
                 }
-                if (Element.NextElement != null)
+                else
                 {
-                    Element.NextElement.PreviousElement = Element.PreviousElement;
+                    FirstNode = FirstNode.NextNode;
                 }
                 count--;
             }
@@ -106,110 +115,65 @@ namespace ConsoleAppLinkedList
         }
         public void Clear()
         {
-            Element Element = GetElement(count - 2);
-            for (int i=count-1;i>0;i--)
-            {
-                Element.NextElement = null;
-                Element = Element.PreviousElement;
-            }
-            ElementLink = null;
+            FirstNode = null;
             count = 0;
         }
-
-        public bool Contains(object item)
+        
+        public bool Contains(Node<T> Node)
         {
             bool Result = false;
-            Element Element = ElementLink;
-            for (int i=0;i<count;i++)
-            {
-                if (item == Element.Data)
-                {
-                    Result = true;
-                    break;
-                }
-                else Element = Element.GetNext();
-            }
-            return Result;
-        }
-        public bool Contains(Element item)
-        {
-            bool Result = false;
-            Element Element = ElementLink;
+            Node<T> SomeNode = FirstNode;
             for (int i = 0; i < count; i++)
             {
-                if (item == Element)
+                if (Node == SomeNode)
                 {
                     Result = true;
                     break;
                 }
-                else Element = Element.GetNext();
+                else SomeNode = SomeNode.GetNext();
             }
             return Result;
         }
-
-        public void CopyTo(object[] item, int itemIndex)
+        public void CopyTo(Node<T>[] NodeList, int itemIndex)
         {
             if ((itemIndex < count) && (itemIndex >= 0))
             {
-                for (int i = 0; i < item.Length; i++)
+                for (int i = 0; i < NodeList.Length; i++)
                 {
-                    Add(itemIndex + i, item[i]);
-                }
-            }
-            else throw new InvalidOperationException();
-        }
-        public void CopyTo(Element[] item, int itemIndex)
-        {
-            if ((itemIndex < count) && (itemIndex >= 0))
-            {
-                for (int i = 0; i < item.Length; i++)
-                {
-                    Add(itemIndex + i, item[i]);
+                    Add(itemIndex + i, NodeList[i]);
                 }
             }
             else throw new InvalidOperationException();
         }
 
-        public IEnumerator<Element> GetEnumerator()
+        public IEnumerator<Node<T>> GetEnumerator()
         {
             if (count > 0)
             {
-                Element Element = ElementLink;
-                yield return Element;
+                Node<T> SomeNode = FirstNode;
+                yield return SomeNode;
                 for (int i = 0; i < count - 1; i++)
                 {
-                    Element = Element.GetNext();
-                    yield return Element;
+                    SomeNode = SomeNode.GetNext();
+                    yield return SomeNode;
                 }
             }else Console.WriteLine("Ошибка:\"Список пуст\"");
         }
-
-        public bool Remove(object item)
+        public bool Remove(Node<T> Node)
         {
             bool Result = false;
-            Element Element = ElementLink;
             for (int i = 0; i < count; i++)
             {
-                if (item == Element.Data)
+                if (this[i] == Node)
                 {
-                    Element.GetNext().NextElement = null;
-                    Element.GetPrevious().PreviousElement = null;
-                    Result = true;
-                    break;
-                }
-            }
-            return Result;
-        }
-        public bool Remove(Element item)
-        {
-            bool Result = false;
-            Element Element = ElementLink;
-            for (int i = 0; i < count; i++)
-            {
-                if (item == Element)
-                {
-                    Element.GetNext().NextElement = null;
-                    Element.GetPrevious().PreviousElement = null;
+                    if (i > 0)
+                    {
+                        this[i - 1].NextNode = (i < count - 1) ? this[i].NextNode : null;
+                    }
+                    else
+                    {
+                        FirstNode = this[1];
+                    }
                     Result = true;
                     break;
                 }
@@ -219,12 +183,12 @@ namespace ConsoleAppLinkedList
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            Element Element = ElementLink;
-            yield return Element;
+            Node<T> SomeNode = FirstNode;
+            yield return SomeNode;
             for (int i = 0; i < count - 1; i++)
             {
-                Element = Element.GetNext();
-                yield return Element;
+                SomeNode = SomeNode.GetNext();
+                yield return SomeNode;
             }
 
         }

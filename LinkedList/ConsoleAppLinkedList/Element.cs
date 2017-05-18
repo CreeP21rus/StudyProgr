@@ -2,66 +2,38 @@
 
 namespace ConsoleAppLinkedList
 {
-    class Element
+    class Node<T>
     {
-        public object Data;
-        public Element NextElement;
-        public Element PreviousElement;
-        public Element()
+        public T Data;
+        public Node<T> NextNode;
+        public Node()
         {
-            this.Data = 0;
-            this.NextElement = null;
-            this.PreviousElement = null;
+            this.Data = default(T);
+            this.NextNode = null;
         }
-        public Element(object Data)
+        public Node(T Data)
         {
             this.Data = Data;
-            this.NextElement = null;
-            this.PreviousElement = null;
+            this.NextNode = null;
         }
-        public Element(object Data, Element PreviousElement)
+        public Node(T Data, Node<T> NextNode)
         {
             this.Data = Data;
-            this.PreviousElement = PreviousElement;
-            this.NextElement = null;
+            this.NextNode = NextNode;
         }
-        public Element(object Data, Element PreviousElement, Element NextElement)
+        public Node(Node<T> NextNode)
         {
-            this.Data = Data;
-            this.PreviousElement = PreviousElement;
-            this.NextElement = NextElement;
+            this.NextNode = NextNode;
         }
-        public Element(Element NextElement)
+        public Node<T> GetNext()
         {
-            this.PreviousElement = null;
-            this.NextElement = NextElement;
+            return NextNode;
         }
-        public ref Element GetNext()
-        {
-            return ref NextElement;
-        }
-        public Element GetNext(int index)
+        public Node<T> GetNext(int index)
         {
             if (index >= 0)
             {
-                Element Result = index == 0 ? this : NextElement;
-                for (int i = 2; i <= index; i++)
-                {
-                    Result = Result.GetNext();
-                }
-                return Result;
-            }
-            else throw new InvalidOperationException();
-        }
-        public Element GetPrevious()
-        {
-            return PreviousElement;
-        }
-        public Element GetPrevious(int index)
-        {
-            if (index >= 0)
-            {
-                Element Result = index == 0 ? this : NextElement;
+                Node<T> Result = index == 0 ? this : NextNode;
                 for (int i = 2; i <= index; i++)
                 {
                     Result = Result.GetNext();
